@@ -7,35 +7,57 @@ from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
 
-def generate_launch_description():
-    vesc_config = PathJoinSubstitution([
+def generate_launch_description() -> LaunchDescription:
+    vesc_driver_config = PathJoinSubstitution([
         FindPackageShare('maila_bringup'),
         'params',
         'vesc_config.yaml',
         ]
     )
-    
-    found_package = [
-                        FindPackageShare('vesc_driver'),
-                        "launch",
-                        "vesc_driver_node.launch.py"
-                    ]
-    print(found_package)
-    
-    return LaunchDescription(
-        [
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                [
-                PathJoinSubstitution(
-                    found_package
-                )
-                ]
-            ),
-            launch_arguments={
-                "config": vesc_config,
-            }.items()
-        )
-        
+
+    vesc_ackermann_config = PathJoinSubstitution([
+        FindPackageShare('maila_bringup'),
+        'params',
+        'vesc_ackermann_config.yaml',
         ]
     )
+
+    start_vesc_driver_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+            PathJoinSubstitution(
+                [
+                    FindPackageShare('maila_bringup'),
+                    "launch",
+                    "vesc_ackermann_node.launch.py",
+                ]
+            )
+            ]
+        ),
+        launch_arguments={
+            "config": vesc_ackermann_config,
+        }.items()
+    )
+
+    start_vesc_ackermann_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+            PathJoinSubstitution(
+                [
+                    FindPackageShare('vesc_driver'),
+                    "launch",
+                    "vesc_driver_node.launch.py",
+                ]
+            )
+            ]
+        ),
+        launch_arguments={
+            "config": vesc_driver_config,
+        }.items()
+    )
+
+    ld = LaunchDescription()
+    ld.add_action(start_vesc_driver_cmd)
+    ld.add_action(start_vesc_ackermann_cmd)
+
+    return ld

@@ -1,0 +1,16 @@
+# Troubleshooting:
+# - Make sure that VESC servo output is enabled
+/**:
+  ros__parameters:
+    # VESC ACKERMANN + VESC TO ODOM
+    speed_to_erpm_gain: 20000.0  # Engine Revolutions per Minute (ERPM) // speed: m/s
+    speed_to_erpm_offset: 0.0
+    steering_angle_to_servo_gain: 0.66
+    steering_angle_to_servo_offset: 0.37
+
+    # VESC TO ODOM
+    odom_frame: "odom"
+    base_frame: "base_link"
+    use_servo_cmd_to_calc_angular_velocity: True
+    wheelbase: 0.4
+    publish_tf: True
