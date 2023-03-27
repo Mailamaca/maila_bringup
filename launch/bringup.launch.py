@@ -27,23 +27,6 @@ def generate_launch_description() -> LaunchDescription:
             [
             PathJoinSubstitution(
                 [
-                    FindPackageShare('maila_bringup'),
-                    "launch",
-                    "vesc_ackermann_node.launch.py",
-                ]
-            )
-            ]
-        ),
-        launch_arguments={
-            "config": vesc_ackermann_config,
-        }.items()
-    )
-
-    start_vesc_ackermann_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [
-            PathJoinSubstitution(
-                [
                     FindPackageShare('vesc_driver'),
                     "launch",
                     "vesc_driver_node.launch.py",
@@ -56,8 +39,43 @@ def generate_launch_description() -> LaunchDescription:
         }.items()
     )
 
+    start_vesc_ackermann_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+            PathJoinSubstitution(
+                [
+                    FindPackageShare('maila_bringup'),
+                    "launch",
+                    "vesc_ackermann_node.launch.py",
+                ]
+            )
+            ]
+        ),
+        launch_arguments={
+            "config": vesc_ackermann_config,
+        }.items()
+    )
+
+    start_vesc_odom_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+            PathJoinSubstitution(
+                [
+                    FindPackageShare('maila_bringup'),
+                    "launch",
+                    "vesc_to_odom_node.launch.py",
+                ]
+            )
+            ]
+        ),
+        launch_arguments={
+            "config": vesc_ackermann_config,
+        }.items()
+    )
+
     ld = LaunchDescription()
     ld.add_action(start_vesc_driver_cmd)
     ld.add_action(start_vesc_ackermann_cmd)
+    ld.add_action(start_vesc_odom_cmd)
 
     return ld
